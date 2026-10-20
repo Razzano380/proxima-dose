@@ -50,7 +50,7 @@ Além disso, a cobertura vacinal varia bastante entre municípios e entre vacina
 | Coberturas vacinais por município | DATASUS — TabNet / SI-PNI (Sistema de Informação do Programa Nacional de Imunizações) | Percentual de cobertura por vacina, município e ano, usado no painel. |
 | Metas de cobertura por vacina | Ministério da Saúde (PNI) | Linha de referência nos gráficos (ex.: comparar a cobertura do município com a meta). |
 
-**Status:** as fontes foram escolhidas; o download e a conferência dos anos disponíveis e do formato dos arquivos estão **planejados para a semana após o Checkpoint 1**. Caso alguma base não esteja disponível no formato esperado, a alternativa será o portal de dados abertos do Ministério da Saúde (OpenDataSUS).
+**Status:** dados baixados em outubro de 2026. Coberturas de 2020, 2021 e 2022 para os 645 municípios de SP (o TabNet não tem anos mais recentes) e o Calendário Nacional de Vacinação 2026 — Criança, em PDF. Os arquivos originais estão em `data/raw/`.
 
 **Dados fictícios:** no protótipo, a demonstração vai usar uma criança fictícia (apenas data de nascimento inventada). Isso será indicado na tela e no vídeo. Nenhum dado real de paciente será usado.
 
@@ -86,7 +86,7 @@ Não vamos usar aprendizado de máquina: o problema é de organização e visual
 | **Plotly** | Gráficos do painel | Gera gráficos interativos (passar o mouse, filtrar) com pouco código e funciona dentro do Streamlit. |
 | **Streamlit** | Interface web | Permite criar telas navegáveis só com Python, sem precisar aprender HTML/JavaScript. É gratuito. |
 | **SQLite** | Banco de dados com o calendário e as coberturas já limpos | Já vem junto com o Python (não precisa instalar servidor nem pagar nada) e guarda tudo em um único arquivo. Permite consultar os dados com SQL, por exemplo filtrar a cobertura de um município. Os arquivos originais baixados ficam guardados em CSV, sem alteração. |
-| **Jupyter Notebook** | Exploração e limpeza inicial dos dados | Facilita testar a limpeza passo a passo e documentar o que foi feito. |
+| **pytest / testes simples** | Conferir a regra das doses | Garante que a regra continua certa quando o código muda. |
 | **Git e GitHub** | Versionamento e entrega | Exigido pela atividade; permite mostrar a contribuição de cada integrante. |
 | **Streamlit Community Cloud** (opcional) | Publicar a aplicação na internet | Gratuito e ligado ao GitHub. Se não der certo, a aplicação roda localmente. |
 
@@ -130,15 +130,67 @@ Manter a vacinação de uma criança em dia depende de acompanhar várias doses 
 | Checkpoint 2 — Protótipo | 09/11 a 13/11/2026 | Aplicação Streamlit com as duas telas funcionando, dados limpos, prints e vídeo |
 | Apresentação final | 07 e 08/12/2026 | Pitch de 5 min, demonstração ao vivo, repositório final, vídeo de até 3 min |
 
-## Estrutura prevista do repositório
+## Estrutura do repositório
 
 ```
 proxima-dose/
 ├── README.md
-├── assets/          # logo, prints das telas
+├── requirements.txt
+├── assets/                       # logo e prints das telas
 ├── data/
-│   ├── raw/         # arquivos originais baixados (sem alteração)
-│   └── proxima_dose.db  # banco SQLite com os dados limpos usados pela aplicação
-├── notebooks/       # exploração e limpeza dos dados
-└── app/             # código da aplicação Streamlit
+│   ├── raw/                      # arquivos originais baixados (sem alteração)
+│   ├── calendario_crianca_2026.csv  # calendário transcrito do PDF oficial
+│   └── proxima_dose.db           # banco SQLite gerado pelo script (não vai para o GitHub)
+├── scripts/preparar_dados.py     # limpeza dos dados e criação do banco
+├── app/
+│   ├── app.py                    # telas (Streamlit)
+│   └── regras.py                 # regra que calcula a situação de cada dose
+└── tests/test_regras.py          # testes da regra
 ```
+
+---
+
+## 7. Como executar
+
+**Pré-requisitos:** Python 3.10 ou mais recente e Git (ou baixar o ZIP pelo botão verde **Code → Download ZIP**).
+
+```bash
+git clone https://github.com/Razzano380/proxima-dose.git
+cd proxima-dose
+pip install -r requirements.txt
+python scripts/preparar_dados.py   # cria data/proxima_dose.db
+streamlit run app/app.py           # abre o app no navegador
+```
+
+Para conferir se a regra das doses está funcionando:
+
+```bash
+python tests/test_regras.py        # deve mostrar 6 linhas começando com "ok"
+```
+
+## 8. Prints do protótipo
+
+**Minha criança:** a partir da data de nascimento (no exemplo, uma criança fictícia nascida em 15/08/2026), o app lista as doses que já deveriam ter sido aplicadas, as dos próximos 3 meses e as futuras.
+
+<img src="assets/prints/tela-minha-crianca.png" alt="Tela Minha criança" width="600">
+
+**Meu município:** cobertura de cada vacina no último ano disponível, comparada à meta, e evolução de 2020 a 2022.
+
+<img src="assets/prints/tela-meu-municipio.png" alt="Tela Meu município" width="600">
+
+## 9. Evolução desde o Checkpoint 1
+
+- Dados reais baixados e limpos (TabNet e calendário oficial 2026).
+- Banco SQLite com as tabelas `cobertura` e `calendario`.
+- Regra das doses implementada e testada.
+- As duas telas funcionando no Streamlit.
+- Retornos do Professor Mentor: _a registrar_.
+
+## 10. Limitações conhecidas
+
+- O TabNet só tem coberturas até **2022**; o painel não mostra a situação atual.
+- Os nomes das vacinas nos dados de 2020–2022 não batem totalmente com o calendário de 2026 (ex.: meningocócica ACWY e pneumocócica 20-valente não aparecem nos dados antigos). Por isso o painel e a lista da criança são telas separadas.
+- A regra usa meses de calendário; o calendário oficial fala em dias em alguns prazos (ex.: rotavírus).
+- No PDF oficial, a 2ª dose da pneumocócica aparece como "10-valente" e as demais como "20-valente". Mantivemos como está no documento.
+- A febre amarela de 6 a 8 meses (casos excepcionais) e a pneumocócica de 5 anos (só povos indígenas) não entram na lista, porque dependem de avaliação individual.
+- Coberturas acima de 100% aparecem em municípios pequenos por causa da forma de cálculo do indicador.
