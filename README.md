@@ -14,14 +14,14 @@
 
 ## Integrantes
 
-| Nome | RA | GitHub |
-|------|----|--------|
-| Gustavo Lima Silva | 2025203029 | _a informar_ |
-| Juan Luccas Gomes Razzano | 2026108904 | [@Razzano380](https://github.com/Razzano380) |
-| Melany Kauane Souza Inácio | 2026207101 | _a informar_ |
-| Rodrigo Viana Camilo | 2025205319 | _a informar_ |
+| Nome | RA |
+|------|----|
+| Gustavo Lima Silva | 2025203029 |
+| Juan Luccas Gomes Razzano | 2026108904 |
+| Melany Kauane Souza Inácio | 2026207101 |
+| Rodrigo Viana Camilo | 2025205319 |
 
-Curso: Ciência de Dados · Turma: _a confirmar_ · Professor Mentor: _a confirmar_
+Curso: Ciência de Dados · Turma: 2º/3º semestre · Professor: Gerson Lourenço Gazola
 
 ---
 
