@@ -20,6 +20,7 @@
 | Juan Luccas Gomes Razzano | 2026108904 |
 | Melany Kauane Souza Inácio | 2026207101 |
 | Rodrigo Viana Camilo | 2025205319 |
+| Thiago Araújo Linhares Fidelis | 2025200106 |
 
 Curso: Ciência de Dados · Turma: 2º/3º semestre · Professor: Gerson Lourenço Gazola
 
